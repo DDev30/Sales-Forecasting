@@ -131,10 +131,11 @@ The application uses Matplotlib to visualize sales predictions:
 ## **Screenshots**
 
 ### **Home Page**
-![Upload File](static/images/upload_page.png)
+![alt text](image.png)
 
 ### **Prediction Results**
-![Prediction Results](static/images/prediction_results.png)
+![alt text](image-1.png)
+![alt text](image-2.png)
 
 ## **Future Enhancements**
 
