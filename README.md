@@ -1,5 +1,6 @@
 
-```markdown
+---
+
 # Sales Forecasting Project
 
 This project is a web-based application that uses machine learning to forecast sales based on historical data. The interface allows users to upload a CSV file with sales data, processes the data, trains a machine learning model, and visualizes the predicted sales. The results, including graphs and predictions, are displayed on the web interface and available for download.
@@ -161,4 +162,4 @@ This project is open-source and available under the [MIT License](LICENSE).
 For any inquiries, feel free to reach out:
 
 - **Email**: dv30arya@gmail.com
-```
+---
