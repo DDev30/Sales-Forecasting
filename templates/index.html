@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sales Forecasting File Upload</title>
+</head>
+<body>
+    <h1>Upload Your Sales Data File</h1>
+    <form action="/" method="POST" enctype="multipart/form-data">
+        <label for="inputFile">Choose a CSV file:</label>
+        <input type="file" id="inputFile" name="inputFile" accept=".csv" required>
+        <br><br>
+        <button type="submit">Upload and Process</button>
+    </form>
+</body>
+</html>
