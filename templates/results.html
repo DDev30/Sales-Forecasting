@@ -4,47 +4,53 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sales Forecasting Results</title>
-    <style>
-        table, th, td {
-            border: 1px solid black;
-            border-collapse: collapse;
-            padding: 10px;
-        }
-        th {
-            background-color: #f2f2f2;
-        }
-    </style>
 </head>
 <body>
     <h1>Sales Forecasting Results</h1>
-    
-    <!-- Display the Graph -->
-    <h2>Actual vs. Predicted Sales</h2>
-    <img src="{{ graph_path }}" alt="Sales Forecast Graph">
-    
-    <!-- Display the Predictions in a Table -->
-    <h2>Prediction Data</h2>
-    <table>
-        <thead>
-            <tr>
-                <th>Date</th>
-                <th>Actual Sales</th>
-                <th>Predicted Sales</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for row in table_data %}
-            <tr>
-                <td>{{ row['Date'] }}</td>
-                <td>{{ row['ActualSales'] }}</td>
-                <td>{{ row['PredictedSales'] }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
+
+    <!-- Display MSE, MAE, and R² metrics -->
+    <h3>Model Performance Metrics</h3>
+    <p><strong>MSE (Mean Squared Error):</strong> {{ metrics['mse'] }}</p>
+    <p><strong>MAE (Mean Absolute Error):</strong> {{ metrics['mae'] }}</p>
+    <p><strong>R² (R-squared):</strong> {{ metrics['r2'] }}</p>
+
+    <!-- Display the plot -->
+    <h3>Sales Forecast</h3>
+    <img src="{{ url_for('static', filename='images/sales_forecast.png') }}" alt="Sales Forecast Plot">
+
+    <!-- Display actual vs predicted sales in a table -->
+    <h3>Actual vs Predicted Sales</h3>
+    <table border="1">
+        <tr>
+            <th>Date</th>
+            <th>Actual Sales</th>
+            <th>Predicted Sales</th>
+        </tr>
+        {% for row in table_data %}
+        <tr>
+            <td>{{ row['Date'] }}</td>  <!-- Now the date is in 'YYYY-MM-DD' format -->
+            <td>{{ row['ActualSales'] | round(3) }}</td>  <!-- Round sales to 3 decimal places -->
+            <td>{{ row['PredictedSales'] | round(3) }}</td>  <!-- Round predicted sales to 3 decimal places -->
+        </tr>
+        {% endfor %}
     </table>
 
-    <!-- Link to download the predictions CSV -->
-    <br>
-    <a href="/SalesPredictions.csv" download>Download Predictions CSV</a>
+    <!-- Display forecasted sales for the next 10 days -->
+    <h3>Forecasted Sales for the Next 10 Days</h3>
+    <table border="1">
+        <tr>
+            <th>Date</th>
+            <th>Predicted Sales</th>
+        </tr>
+        {% for row in future_sales %}
+        <tr>
+            <td>{{ row['Date'] }}</td>  <!-- Now the date is in 'YYYY-MM-DD' format -->
+            <td>{{ row['PredictedSales'] | round(3) }}</td>  <!-- Round predicted sales to 3 decimal places -->
+        </tr>
+        {% endfor %}
+    </table>
+
+    <!-- Download link -->
+    <h3><a href="{{ url_for('download') }}">Download the Predictions CSV</a></h3>
 </body>
 </html>

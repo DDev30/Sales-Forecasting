@@ -1,7 +1,7 @@
 # 1. Importing Libraries
 import pandas as pd
 import numpy as np
-from sklearn.model_selection import train_test_split, TimeSeriesSplit
+from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.pipeline import Pipeline
@@ -44,7 +44,7 @@ def train_model(df):
     X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.2, random_state=42, shuffle=False)
 
     # Model Pipeline
-    pipeline = Pipeline([
+    pipeline = Pipeline([ 
         ('scaler', StandardScaler()),
         ('model', RandomForestRegressor(n_estimators=100, random_state=42))
     ])
@@ -66,8 +66,39 @@ def train_model(df):
     results_df['PredictedSales'] = y_pred
     results_df['Date'] = df.loc[X_test.index, 'Date']
     results_df = results_df[['Date', 'ActualSales', 'PredictedSales']]
+
+    # Forecast the next 10 days
+    future_dates = forecast_future_sales(df, pipeline, 10)
+
+    return pipeline, results_df, metrics, future_dates
+
+def forecast_future_sales(df, pipeline, num_days=10):
+    """ Forecast sales for the next 'num_days' days after the last date in the dataset. """
+    # Get the last date in the dataset
+    last_date = df['Date'].max()
     
-    return pipeline, results_df, metrics
+    # Create future dates (next 10 days)
+    future_dates = pd.date_range(last_date + pd.Timedelta(days=1), periods=num_days, freq='D')
+
+    # Prepare the features for future dates
+    future_df = pd.DataFrame({
+        'Date': future_dates,
+        'Month': future_dates.month,
+        'Year': future_dates.year,
+        'MonthOfYear': future_dates.month,
+        'DayOfYear': future_dates.dayofyear,
+        'MonthNumeric': future_dates.year * 100 + future_dates.month,
+        'Lag1': [df['Sales'].iloc[-1]] * num_days,  # Use last sales value for Lag1
+        'Lag2': [df['Sales'].iloc[-2]] * num_days,  # Use second last sales value for Lag2
+        'Lag3': [df['Sales'].iloc[-3]] * num_days,  # Use third last sales value for Lag3
+        'RollingMean3': [df['Sales'].rolling(window=3).mean().iloc[-1]] * num_days,  # Use rolling mean for the last 3 values
+    })
+
+    # Predict future sales
+    future_sales = pipeline.predict(future_df[['MonthNumeric', 'Year', 'MonthOfYear', 'DayOfYear', 'Lag1', 'Lag2', 'Lag3', 'RollingMean3']])
+    future_df['PredictedSales'] = future_sales
+
+    return future_df[['Date', 'PredictedSales']]
 
 def save_predictions(results_df, file_path):
     """ Save predictions to a CSV file. """
